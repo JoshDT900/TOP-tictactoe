@@ -5,10 +5,26 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic-Tac-Toe</title>
-  </head>
-  <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
+  </head>  
   <body>
-    
+    <div class='form_container'>
+      <form action="">
+        <div>
+          <label for="player_one">Player One's Name.</label>
+          <input type="text" name="player_name" id="player_one" value='Player One'>
+        </div>
+        <div>
+          <label for="player_two">Player Two's Name</label>
+          <input type="text" name="player_name" id="player_two" value='Player Two'>
+        </div>
+        <button type="submit" id='add_players' class='submit_players'>Start Game</button>
+      </form>
+      <div class='game_box'>
+        
+      </div>
+    </div>
+
     
     <script src="script.js"></script>
   </body>
