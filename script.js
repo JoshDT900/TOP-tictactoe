@@ -4,36 +4,33 @@ const gameboard = (() => {
   const addPlayers = document.querySelector('#add_players')
   
   let game = {
-    gameBoard: [],
+    gameBoard: ['X', 'O', 'X', 'O', 'X', 'O', 'X', 'O', 'X'],
     players: []
-  } 
+  }
 
-  return { game, playerOneEle, playerTwoEle, addPlayers }
+  const PlayerMaker = (name) => {
+    let score = 0;
+    let marker = 'X';
+    
+    if (game.players.length > 0) {
+      marker = 'O'
+    } 
+    
+    return { name, score, marker }
+  }
+
+  const setPlayers = function (e) {
+    e.preventDefault(); 
+    game.players = [];
+    
+    game.players.push(PlayerMaker(playerOneEle.value));
+    game.players.push(PlayerMaker(playerTwoEle.value));
+  }
+
+  addPlayers.addEventListener('click', setPlayers)
+
+  return { game }
 })();
-
-function setPlayers(e) {
-  e.preventDefault(); 
-  gameboard.game.players = [];
-  
-  gameboard.game.players.push(PlayerMaker(gameboard.playerOneEle.value));
-  gameboard.game.players.push(PlayerMaker(gameboard.playerTwoEle.value));
-}
-
-
-const PlayerMaker = (name) => {
-  let score = 0;
-  let marker = 'X';
-  
-  if (gameboard.game.players.length > 0) {
-    marker = 'O'
-  } 
-  
-  return { name, score, marker }
-}
-
-gameboard.addPlayers.addEventListener('click', setPlayers)
-
-
 
 /*
 User goes to site
