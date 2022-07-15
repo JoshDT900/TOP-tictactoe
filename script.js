@@ -35,10 +35,10 @@ const gameboard = (() => {
 function playGame() {
   const selectedSquare = document.querySelectorAll('.game_box')
   let turns = 0;
-
+ 
   // Handles populating gameboard values and placement based on user choice
   function placeSquare(e) {
-    const arrIndex = Array.from(selectedSquare).indexOf(e.target);
+    const arrIndex = Array.from(selectedSquare).indexOf(e.target);    
 
     if (turns % 2 === 0) {
       turns++;
@@ -64,28 +64,51 @@ function playGame() {
       
       if (playOneWins.test(gameString)) {
         gameboard.game.players[0].score++
-        gameboard.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+        gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
+        turns = 0
 
         for (let e of selectedSquare){
           e.innerHTML = " ";
         }
 
-        return alert('Player One Has Won!')
+        selectedSquare.forEach(cell => {
+          cell.addEventListener('click', placeSquare)
+        })
+
+        if (gameboard.game.players[0].score === 3) {
+          return alert(`${gameboard.game.players[0].name} has won! Congratulations.`)
+        }
+        
+        return alert(`${gameboard.game.players[0].name} has won the round!`)
       } else if (playTwoWins.test(gameString)) {
         gameboard.game.players[1].score++
-        gameboard.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+        gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+        turns = 0
 
         for (let e of selectedSquare){
           e.innerHTML = " ";
         }
 
-        return alert('Player Two Has Won!');
+        selectedSquare.forEach(cell => {
+          cell.addEventListener('click', placeSquare)
+        })
+
+        if (gameboard.game.players[1].score === 3) {
+          return alert(`${gameboard.game.players[1].name} has won! Congratulations.`)
+        }
+        
+        return alert(`${gameboard.game.players[1].name} has won the round!`);
       } else if (turns === 9) {
-        gameboard.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+        gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+        turns = 0
 
         for (let e of selectedSquare){
           e.innerHTML = " ";
         }
+
+        selectedSquare.forEach(cell => {
+          cell.addEventListener('click', placeSquare)
+        })
 
         return alert('It\'s a tie!');
       }
