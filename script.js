@@ -4,7 +4,7 @@ const gameboard = (() => {
   const addPlayers = document.querySelector('#add_players')
   
   let game = {
-    gameBoard: ['X', 'O', 'X', 'O', 'X', 'O', 'X', 'O', 'X'],
+    gameBoard: [],
     players: []
   }
 
@@ -29,8 +29,36 @@ const gameboard = (() => {
 
   addPlayers.addEventListener('click', setPlayers)
 
-  return { game }
+  return { game, playerOneEle, playerTwoEle }
 })();
+
+function playGame() {
+  const selectedSquare = document.querySelectorAll('.game_box')  
+
+  function placeSquare(e) {
+    
+
+    if (gameboard.game.gameBoard.length % 2 === 0) {
+      gameboard.game.gameBoard.push(gameboard.game.players[0].marker);
+      e.target.innerHTML = gameboard.game.players[0].marker;
+      e.target.removeEventListener('click', placeSquare);
+    } else if (gameboard.game.gameBoard.length % 2 === 1) {
+      gameboard.game.gameBoard.push(gameboard.game.players[1].marker);
+      e.target.innerHTML = gameboard.game.players[1].marker;
+      e.target.removeEventListener('click', placeSquare);
+    } 
+
+    if (gameboard.game.gameBoard.length === 9) {
+      console.log('Works!');
+    }
+  }  
+
+  selectedSquare.forEach(cell => {
+    cell.addEventListener('click', placeSquare)
+  })
+}
+
+playGame()
 
 /*
 User goes to site
