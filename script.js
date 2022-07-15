@@ -36,7 +36,7 @@ function playGame() {
   const selectedSquare = document.querySelectorAll('.game_box')
   let turns = 0;
 
-  // Handles populating gameboard values and cell placement
+  // Handles populating gameboard values and placement based on user choice
   function placeSquare(e) {
     const arrIndex = Array.from(selectedSquare).indexOf(e.target);
 
@@ -55,22 +55,20 @@ function playGame() {
     // Checks who wins or if it's a tie
     setTimeout(() => {
       const gameString = gameboard.game.gameBoard.join("")
+      const playOneWins = new RegExp(
+        "^(XXX)|^.{3}(XXX)|(X.{2})(X.{2})(X.{2})|(XXX)$|(.{2}X)(.{2}X)(.{2}X)|(.X.)(.X.)(.X.)|(X.{2})(.X.)(.{2}X)|(.{2}X)(.X.)(X.{2})"
+        )
+      const playTwoWins = new RegExp (
+        "^(OOO)|^.{3}(OOO)|(O.{2})(O.{2})(O.{2})|(OOO)$|(.{2}O)(.{2}O)(.{2}O)|(.O.)(.O.)(.O.)|(O.{2})(.O.)(.{2}O)|(.{2}O)(.O.)(O.{2})"
+      )
       
-      if (/^(XXX)|^.{3}(XXX)|(X.{2})(X.{2})(X.{2})|(XXX)$/.test(gameString) ||
-          /(.{2}X)(.{2}X)(.{2}X)/.test(gameString) ||
-          /(.X.)(.X.)(.X.)/.test(gameString) ||
-          /(X.{2})(.X.)(.{2}X)/.test(gameString) ||
-          /(.{2}X)(.X.)(X.{2})/.test(gameString)) {
+      if (playOneWins.test(gameString)) {
         return alert('Player One Has Won!')
-      } else if (/^(OOO)|^.{3}(OOO)|(O.{2})(O.{2})(O.{2})|(OOO)$/.test(gameString) ||
-                /(.{2}O)(.{2}O)(.{2}O)/.test(gameString) ||
-                /(.O.)(.O.)(.O.)/.test(gameString) ||
-                /(O.{2})(.O.)(.{2}O)/.test(gameString) ||
-                /(.{2}O)(.O.)(O.{2})/.test(gameString)) {
-          return alert('Player Two Has Won!');
-        } else if (turns === 9) {
-          return alert('It\'s a tie!');
-        }
+      } else if (playTwoWins.test(gameString)) {
+        return alert('Player Two Has Won!');
+      } else if (turns === 9) {
+        return alert('It\'s a tie!');
+      }
     }, 25)
   }  
 
