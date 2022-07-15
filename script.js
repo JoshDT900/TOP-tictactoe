@@ -36,6 +36,7 @@ function playGame() {
   const selectedSquare = document.querySelectorAll('.game_box')
   let turns = 0;
 
+  // Handles populating gameboard values and cell placement
   function placeSquare(e) {
     const arrIndex = Array.from(selectedSquare).indexOf(e.target);
 
@@ -51,6 +52,7 @@ function playGame() {
       e.target.removeEventListener('click', placeSquare);
     } 
 
+    // Checks who wins or if it's a tie
     setTimeout(() => {
       const gameString = gameboard.game.gameBoard.join("")
       
