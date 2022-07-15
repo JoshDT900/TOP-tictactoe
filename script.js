@@ -4,7 +4,7 @@ const gameboard = (() => {
   const addPlayers = document.querySelector('#add_players')
   
   let game = {
-    gameBoard: [],
+    gameBoard: [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     players: []
   }
 
@@ -33,24 +33,43 @@ const gameboard = (() => {
 })();
 
 function playGame() {
-  const selectedSquare = document.querySelectorAll('.game_box')  
+  const selectedSquare = document.querySelectorAll('.game_box')
+  let turns = 0;
 
   function placeSquare(e) {
-    
+    const arrIndex = Array.from(selectedSquare).indexOf(e.target);
 
-    if (gameboard.game.gameBoard.length % 2 === 0) {
-      gameboard.game.gameBoard.push(gameboard.game.players[0].marker);
+    if (turns % 2 === 0) {
+      turns++;
+      gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[0].marker);
       e.target.innerHTML = gameboard.game.players[0].marker;
       e.target.removeEventListener('click', placeSquare);
-    } else if (gameboard.game.gameBoard.length % 2 === 1) {
-      gameboard.game.gameBoard.push(gameboard.game.players[1].marker);
+    } else if (turns % 2 === 1) {
+      turns++;
+      gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[1].marker);
       e.target.innerHTML = gameboard.game.players[1].marker;
       e.target.removeEventListener('click', placeSquare);
     } 
 
-    if (gameboard.game.gameBoard.length === 9) {
-      console.log('Works!');
-    }
+    setTimeout(() => {
+      const gameString = gameboard.game.gameBoard.join("")
+      
+      if (/^(XXX)|^.{3}(XXX)|(X.{2})(X.{2})(X.{2})|(XXX)$/.test(gameString) ||
+          /(.{2}X)(.{2}X)(.{2}X)/.test(gameString) ||
+          /(.X.)(.X.)(.X.)/.test(gameString) ||
+          /(X.{2})(.X.)(.{2}X)/.test(gameString) ||
+          /(.{2}X)(.X.)(X.{2})/.test(gameString)) {
+        return alert('Player One Has Won!')
+      } else if (/^(OOO)|^.{3}(OOO)|(O.{2})(O.{2})(O.{2})|(OOO)$/.test(gameString) ||
+                /(.{2}O)(.{2}O)(.{2}O)/.test(gameString) ||
+                /(.O.)(.O.)(.O.)/.test(gameString) ||
+                /(O.{2})(.O.)(.{2}O)/.test(gameString) ||
+                /(.{2}O)(.O.)(O.{2})/.test(gameString)) {
+          return alert('Player Two Has Won!');
+        } else if (turns === 9) {
+          return alert('It\'s a tie!');
+        }
+    }, 25)
   }  
 
   selectedSquare.forEach(cell => {
