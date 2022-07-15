@@ -63,10 +63,30 @@ function playGame() {
       )
       
       if (playOneWins.test(gameString)) {
+        gameboard.game.players[0].score++
+        gameboard.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+
+        for (let e of selectedSquare){
+          e.innerHTML = " ";
+        }
+
         return alert('Player One Has Won!')
       } else if (playTwoWins.test(gameString)) {
+        gameboard.game.players[1].score++
+        gameboard.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+
+        for (let e of selectedSquare){
+          e.innerHTML = " ";
+        }
+
         return alert('Player Two Has Won!');
       } else if (turns === 9) {
+        gameboard.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+
+        for (let e of selectedSquare){
+          e.innerHTML = " ";
+        }
+
         return alert('It\'s a tie!');
       }
     }, 25)
@@ -83,7 +103,6 @@ playGame()
 User goes to site
   player starts the game
     user is asked for 2 player names
-    a 3x3 grid is generated
     scores are initialized
       player one chooses a cell
       player two chooses a cell
