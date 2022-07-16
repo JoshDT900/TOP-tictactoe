@@ -21,3 +21,19 @@
   font-size: 40px;
   background-color: cadetblue;
 }
+
+.game_box:nth-child(-n+3) {
+  border-top: none;
+}
+
+.game_box:nth-child(3n+1) {
+  border-left: none;
+}
+
+.game_box:nth-child(3n+3) {
+  border-right: none;
+}
+
+.game_box:nth-child(n+7) {
+  border-bottom: none;
+}

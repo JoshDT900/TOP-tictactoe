@@ -64,6 +64,7 @@ function playGame() {
       
       if (playOneWins.test(gameString)) {
         gameboard.game.players[0].score++
+        drawScore()
         gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
         turns = 0
 
@@ -79,9 +80,10 @@ function playGame() {
           return alert(`${gameboard.game.players[0].name} has won! Congratulations.`)
         }
         
-        return alert(`${gameboard.game.players[0].name} has won the round!`)
+        return alert(`${gameboard.game.players[0].name} has won the round!`);
       } else if (playTwoWins.test(gameString)) {
         gameboard.game.players[1].score++
+        drawScore()
         gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
         turns = 0
 
@@ -91,7 +93,7 @@ function playGame() {
 
         selectedSquare.forEach(cell => {
           cell.addEventListener('click', placeSquare)
-        })
+        })        
 
         if (gameboard.game.players[1].score === 3) {
           return alert(`${gameboard.game.players[1].name} has won! Congratulations.`)
@@ -100,6 +102,7 @@ function playGame() {
         return alert(`${gameboard.game.players[1].name} has won the round!`);
       } else if (turns === 9) {
         gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+        drawScore()
         turns = 0
 
         for (let e of selectedSquare){
@@ -121,6 +124,14 @@ function playGame() {
 }
 
 playGame()
+
+function drawScore() {
+  const playOneScore = document.querySelector('.pOne')
+  const platTwoScore = document.querySelector('.pTwo')
+
+  playOneScore.textContent = `${gameboard.game.players[0].name}\'s score is: ${gameboard.game.players[0].score}`
+  platTwoScore.textContent = `${gameboard.game.players[1].name}\'s score is: ${gameboard.game.players[1].score}`
+}
 
 /*
 User goes to site
