@@ -2,6 +2,7 @@ const gameboard = (() => {
   const playerOneEle = document.querySelector('#player_one')
   const playerTwoEle = document.querySelector('#player_two')
   const addPlayers = document.querySelector('#add_players')
+  const whosTurn = document.querySelector('.whos_turn')
   
   let game = {
     gameBoard: [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -25,11 +26,25 @@ const gameboard = (() => {
     
     game.players.push(PlayerMaker(playerOneEle.value));
     game.players.push(PlayerMaker(playerTwoEle.value));
+
+    playerTurn(gameboard.game.players[0].name)
+  }
+
+  const drawScore = function () {
+    const playOneScore = document.querySelector('.pOne')
+    const platTwoScore = document.querySelector('.pTwo')
+
+    playOneScore.textContent = `${game.players[0].name}\'s score is: ${game.players[0].score}`
+    platTwoScore.textContent = `${game.players[1].name}\'s score is: ${game.players[1].score}`
+  }
+
+  const playerTurn = function (name) {
+    whosTurn.textContent = `It is now ${name} turn.`
   }
 
   addPlayers.addEventListener('click', setPlayers)
 
-  return { game, playerOneEle, playerTwoEle }
+  return { game, playerOneEle, playerTwoEle, drawScore, playerTurn }
 })();
 
 function playGame() {
@@ -42,11 +57,13 @@ function playGame() {
 
     if (turns % 2 === 0) {
       turns++;
+      gameboard.playerTurn(gameboard.game.players[1].name)
       gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[0].marker);
       e.target.innerHTML = gameboard.game.players[0].marker;
       e.target.removeEventListener('click', placeSquare);
     } else if (turns % 2 === 1) {
       turns++;
+      gameboard.playerTurn(gameboard.game.players[0].name)
       gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[1].marker);
       e.target.innerHTML = gameboard.game.players[1].marker;
       e.target.removeEventListener('click', placeSquare);
@@ -64,7 +81,8 @@ function playGame() {
       
       if (playOneWins.test(gameString)) {
         gameboard.game.players[0].score++
-        drawScore()
+        gameboard.drawScore()
+        gameboard.playerTurn(gameboard.game.players[0].name)
         gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
         turns = 0
 
@@ -83,7 +101,8 @@ function playGame() {
         return alert(`${gameboard.game.players[0].name} has won the round!`);
       } else if (playTwoWins.test(gameString)) {
         gameboard.game.players[1].score++
-        drawScore()
+        gameboard.drawScore()
+        gameboard.playerTurn(gameboard.game.players[0].name)
         gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
         turns = 0
 
@@ -93,7 +112,7 @@ function playGame() {
 
         selectedSquare.forEach(cell => {
           cell.addEventListener('click', placeSquare)
-        })        
+        })     
 
         if (gameboard.game.players[1].score === 3) {
           return alert(`${gameboard.game.players[1].name} has won! Congratulations.`)
@@ -102,7 +121,7 @@ function playGame() {
         return alert(`${gameboard.game.players[1].name} has won the round!`);
       } else if (turns === 9) {
         gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
-        drawScore()
+        gameboard.drawScore()
         turns = 0
 
         for (let e of selectedSquare){
@@ -112,6 +131,8 @@ function playGame() {
         selectedSquare.forEach(cell => {
           cell.addEventListener('click', placeSquare)
         })
+
+        gameboard.playerTurn(gameboard.game.players[0].name)
 
         return alert('It\'s a tie!');
       }
@@ -125,22 +146,13 @@ function playGame() {
 
 playGame()
 
-function drawScore() {
-  const playOneScore = document.querySelector('.pOne')
-  const platTwoScore = document.querySelector('.pTwo')
-
-  playOneScore.textContent = `${gameboard.game.players[0].name}\'s score is: ${gameboard.game.players[0].score}`
-  platTwoScore.textContent = `${gameboard.game.players[1].name}\'s score is: ${gameboard.game.players[1].score}`
-}
-
 /*
 User goes to site
-  player starts the game
-    user is asked for 2 player names
-    scores are initialized
+user is asked for 2 player names
+  player starts the game    
       player one chooses a cell
       player two chooses a cell
-      repeat until grid is full
+      repeat until grid is full or line of 3 in arow
         if a line of 3 occurs
           player 'x' gets 1 point
         else 
