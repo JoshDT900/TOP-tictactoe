@@ -1,8 +1,8 @@
 const gameboard = (() => { 
   const playerOneEle = document.querySelector('#player_one')
-  const playerTwoEle = document.querySelector('#player_two')
-  const startGame = document.querySelector('.start_game')
+  const playerTwoEle = document.querySelector('#player_two')  
   const playerForm = document.querySelector('.form_container')
+  const formTarget = document.querySelector('.player_form')
   
   let game = {
     gameBoard: [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -20,13 +20,13 @@ const gameboard = (() => {
     return { name, score, marker }
   }
 
-  const playerFormDisplay = function () {    
+  const playerFormHide = function () {    
     playerForm.style.visibility = 'hidden' 
   }
 
-  const setPlayers = function (e) {
-    playerFormDisplay()
-    e.preventDefault(); 
+  const setPlayers = function () {
+    playerFormHide()
+     
     game.players = [];
     
     game.players.push(PlayerMaker(playerOneEle.value));
@@ -36,21 +36,37 @@ const gameboard = (() => {
     drawScore()
   }
 
+  function handleForm(e) {
+    e.preventDefault()
+
+    setPlayers()
+    playGame()
+  }
+
+  formTarget.addEventListener('submit', handleForm)
+
   const drawScore = function () {
     const playOneScore = document.querySelector('.pOne')
     const platTwoScore = document.querySelector('.pTwo')
 
-    playOneScore.textContent = `${game.players[0].name}\'s score is: ${game.players[0].score}`
-    platTwoScore.textContent = `${game.players[1].name}\'s score is: ${game.players[1].score}`
+    const pOneScoreNum = document.querySelector('.pOneScore')
+    const pTwoScoreNum = document.querySelector('.pTwoScore')
+
+    const scoreBox = document.querySelectorAll('.score_box')
+    scoreBox.forEach(display => display.style.visibility = 'visible');
+
+    pOneScoreNum.textContent = `${game.players[0].score}`
+    pTwoScoreNum.textContent = `${game.players[1].score}`
+
+    playOneScore.textContent = `${game.players[0].name}\'s score.`
+    platTwoScore.textContent = `${game.players[1].name}\'s score.`
   }
 
   const playerTurn = function (name) {
     const whosTurn = document.querySelector('.whos_turn')
 
     whosTurn.textContent = `It is now ${name}'s turn.`
-  }
-
-  startGame.addEventListener('click', setPlayers)
+  }  
 
   return { game, playerOneEle, playerTwoEle, drawScore, playerTurn }
 })();
@@ -169,20 +185,3 @@ function playGame() {
     cell.addEventListener('click', placeSquare)
   })
 }
-
-playGame()
-
-/*
-User goes to site
-user is asked for 2 player names
-  player starts the game    
-      player one chooses a cell
-      player two chooses a cell
-      repeat until grid is full or line of 3 in arow
-        if a line of 3 occurs
-          player 'x' gets 1 point
-        else 
-          empty grid
-        best of 5 wins
-        ask to play again
-*/

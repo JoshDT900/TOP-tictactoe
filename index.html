@@ -16,13 +16,13 @@
         <form action="" class='player_form'>
           <div>
             <label for="player_one">Player One's Name.</label>
-            <input type="text" name="player_name" id="player_one" placeholder='Joe55'>
+            <input type="text" name="player_name" id="player_one" placeholder='Joe55' required>
           </div>
           <div>
             <label for="player_two">Player Two's Name</label>
-            <input type="text" name="player_name" id="player_two" placeholder='Bill95'>
+            <input type="text" name="player_name" id="player_two" placeholder='Bill95' required>
           </div>
-          <button type="submit" id='add_players' class='start_game'>Start Game</button>
+          <input type="submit" value='Submit' id='add_players' class='start_game'>
         </form>
       </div>
       <div class='players_turn'>
@@ -31,6 +31,7 @@
       <div class='game_wrapper'>
         <div class='player_one'>
           <div class='score_box'>
+            <p class='pOneScore'></p>
             <p class='pOne'></p>            
           </div>          
         </div>
@@ -47,6 +48,7 @@
         </div>
         <div class="player_two">
           <div class="score_box">
+            <p class='pTwoScore'></p>
             <p class='pTwo'></p>
           </div>          
         </div>
