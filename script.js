@@ -1,8 +1,8 @@
 const gameboard = (() => { 
   const playerOneEle = document.querySelector('#player_one')
   const playerTwoEle = document.querySelector('#player_two')
-  const addPlayers = document.querySelector('#add_players')
-  const whosTurn = document.querySelector('.whos_turn')
+  const startGame = document.querySelector('.start_game')
+  const playerForm = document.querySelector('.form_container')
   
   let game = {
     gameBoard: [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -20,7 +20,12 @@ const gameboard = (() => {
     return { name, score, marker }
   }
 
+  const playerFormDisplay = function () {    
+    playerForm.style.visibility = 'hidden' 
+  }
+
   const setPlayers = function (e) {
+    playerFormDisplay()
     e.preventDefault(); 
     game.players = [];
     
@@ -28,6 +33,7 @@ const gameboard = (() => {
     game.players.push(PlayerMaker(playerTwoEle.value));
 
     playerTurn(gameboard.game.players[0].name)
+    drawScore()
   }
 
   const drawScore = function () {
@@ -39,10 +45,12 @@ const gameboard = (() => {
   }
 
   const playerTurn = function (name) {
-    whosTurn.textContent = `It is now ${name} turn.`
+    const whosTurn = document.querySelector('.whos_turn')
+
+    whosTurn.textContent = `It is now ${name}'s turn.`
   }
 
-  addPlayers.addEventListener('click', setPlayers)
+  startGame.addEventListener('click', setPlayers)
 
   return { game, playerOneEle, playerTwoEle, drawScore, playerTurn }
 })();
@@ -95,10 +103,19 @@ function playGame() {
         })
 
         if (gameboard.game.players[0].score === 3) {
-          return alert(`${gameboard.game.players[0].name} has won! Congratulations.`)
-        }
+          gameboard.game.players[0].score = 0;
+          gameboard.game.players[1].score = 0;
+          gameboard.drawScore()
+
+          setTimeout(() => {
+            return alert(`${gameboard.game.players[0].name} has won! Congratulations.`)
+          }, 20);
+        } else {
+          setTimeout(() => {
+            return alert(`${gameboard.game.players[0].name} has won the round!`);
+          }, 25);
+        }                
         
-        return alert(`${gameboard.game.players[0].name} has won the round!`);
       } else if (playTwoWins.test(gameString)) {
         gameboard.game.players[1].score++
         gameboard.drawScore()
@@ -115,10 +132,19 @@ function playGame() {
         })     
 
         if (gameboard.game.players[1].score === 3) {
-          return alert(`${gameboard.game.players[1].name} has won! Congratulations.`)
+          gameboard.game.players[0].score = 0;
+          gameboard.game.players[1].score = 0;
+          gameboard.drawScore()
+
+          setTimeout(() => {
+            return alert(`${gameboard.game.players[1].name} has won! Congratulations.`)
+          }, 20);
+        } else {
+          setTimeout(() => {
+            return alert(`${gameboard.game.players[1].name} has won the round!`);
+          }, 25);  
         }
         
-        return alert(`${gameboard.game.players[1].name} has won the round!`);
       } else if (turns === 9) {
         gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
         gameboard.drawScore()

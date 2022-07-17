@@ -20,6 +20,53 @@ body {
   height: 80px;
 }
 
+.player_form {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  gap: 30px;
+  height: auto;
+  padding: 20px;
+  width: 400px;
+  border: 2px solid black;
+  border-radius: 5px;
+  box-shadow: 5px 5px 5px black;
+  background-color: #E31C25;
+  color: white;
+}
+
+#add_players {
+  width: -webkit-fill-available;
+  padding: 10px;
+  background-color: #1C1C1C;
+  outline: none;
+  border: 3px solid black;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 10px;
+}
+
+.form_container {
+  background-color: rgba(0, 0, 0, 0.25);
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  visibility: visible;
+}
+
+.player_form div {
+  width: -webkit-fill-available;
+
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
 .game_wrapper {
   height: inherit;
   display: flex;
