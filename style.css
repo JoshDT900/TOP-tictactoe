@@ -30,7 +30,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80px;
+  min-height: 80px;
   background-color: #252527;
   color: white;
 }
@@ -71,7 +71,6 @@ body {
   height: 100vh;
   width: 100%;
   display: flex;
-  visibility: visible;
 }
 
 .player_form label {
@@ -124,7 +123,30 @@ body {
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;  
   box-shadow: 5px 5px 5px black;
+}
 
+.game_type {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  height: 250px;
+}
+
+.game_type button {
+  width: 300px;
+  padding: 10px;
+
+  color: white;
+  background-color: maroon;
+  border: 4px solid black;
+
+  font-family: 'Obitron Bold', Arial, Helvetica, sans-serif;
+  font-size: 20px;
+}
+
+.game_type button:hover {
+  color: maroon;
+  background-color: white;
 }
 
 .player_one,

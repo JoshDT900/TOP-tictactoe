@@ -3,6 +3,9 @@ const gameboard = (() => {
   const playerTwoEle = document.querySelector('#player_two'); 
   const playerForm = document.querySelector('.form_container');
   const formTarget = document.querySelector('.player_form');
+  const playerVsPlayer = document.querySelector('.pvpbtn')
+  const gameBtns = document.querySelector('.game_type')
+  
   
   let game = {
     gameBoard: [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -20,12 +23,32 @@ const gameboard = (() => {
     return { name, score, marker };
   }
 
-  const playerFormHide = function () {    
-    playerForm.style.visibility = 'hidden';
+  const playerFormDisplay = function () {
+    if (playerForm.style.visibility === 'hidden') {
+      playerForm.style.visibility = 'visible';
+    } else {
+      playerForm.style.visibility = 'hidden';
+    }
   }
 
+  const displayGameChoice = function () {
+    gameBtns.style.display = 'none'
+  }
+
+  const showGame = function () {
+    const gameBox = document.querySelector('.game_wrapper')
+    const turnDisplay = document.querySelector('.players_turn')
+
+    turnDisplay.style.visibility = 'visible';
+    gameBox.style.visibility = 'visible';
+  }
+
+  
+  playerVsPlayer.addEventListener('click', playerFormDisplay)
+  playerVsPlayer.addEventListener('click', displayGameChoice)
+
   const setPlayers = function () {
-    playerFormHide();
+    playerFormDisplay();
      
     game.players = [];
     
@@ -41,9 +64,11 @@ const gameboard = (() => {
 
     setPlayers();
     playGame();
+    showGame();
   }
 
   formTarget.addEventListener('submit', handleForm)
+
 
   const drawScore = function () {
     const playOneScore = document.querySelector('.pOne');
@@ -90,23 +115,43 @@ function playGame() {
  
   // Handles populating gameboard values and placement based on user choice
   function placeSquare(e) {
-    const arrIndex = Array.from(selectedSquare).indexOf(e.target);    
+    const arrIndex = Array.from(selectedSquare).indexOf(e.target);
 
-    if (turns % 2 === 0) {
-      turns++;
-      gameboard.playerTurn(gameboard.game.players[1].name);
-      gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[0].marker);
-      e.target.innerHTML = gameboard.game.players[0].marker;
-      e.target.removeEventListener('click', placeSquare);
-      gameboard.colorMarker();
-    } else if (turns % 2 === 1) {
-      turns++;
+    if (round % 2 === 0) {
       gameboard.playerTurn(gameboard.game.players[0].name);
-      gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[1].marker);
-      e.target.innerHTML = gameboard.game.players[1].marker;
-      e.target.removeEventListener('click', placeSquare);
-      gameboard.colorMarker();
-    } 
+      if (turns % 2 === 0) {
+        turns++;
+        gameboard.playerTurn(gameboard.game.players[1].name);
+        gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[0].marker);
+        e.target.innerHTML = gameboard.game.players[0].marker;
+        e.target.removeEventListener('click', placeSquare);
+        gameboard.colorMarker();
+      } else if (turns % 2 === 1) {
+        turns++;
+        gameboard.playerTurn(gameboard.game.players[0].name);
+        gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[1].marker);
+        e.target.innerHTML = gameboard.game.players[1].marker;
+        e.target.removeEventListener('click', placeSquare);
+        gameboard.colorMarker();
+      }
+    } else if (round % 2 === 1) {
+      gameboard.playerTurn(gameboard.game.players[1].name);
+      if (turns % 2 === 0) {
+        turns++;
+        gameboard.playerTurn(gameboard.game.players[0].name);
+        gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[1].marker);
+        e.target.innerHTML = gameboard.game.players[1].marker;
+        e.target.removeEventListener('click', placeSquare);
+        gameboard.colorMarker();
+      } else if (turns % 2 === 1) {
+        turns++;
+        gameboard.playerTurn(gameboard.game.players[1].name);
+        gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[0].marker);
+        e.target.innerHTML = gameboard.game.players[0].marker;
+        e.target.removeEventListener('click', placeSquare);
+        gameboard.colorMarker();
+      } 
+    }
 
     // Checks who wins or if it's a tie
     setTimeout(() => {

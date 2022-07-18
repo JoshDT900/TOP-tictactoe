@@ -12,7 +12,18 @@
       <nav class='nav_bar'>
         <h1>Tic Tac Toe</h1>
       </nav>
-      <div class='form_container'>
+      <div class='game_type'>
+        <button class='pvpbtn'>
+          Player vs Player
+        </button>
+        <button>
+          Player vs Fair AI
+        </button>
+        <button>
+          Player vs Cheating AI
+        </button>
+      </div>
+      <div class='form_container' style='visibility: hidden;'>
         <form action="" class='player_form'>
           <div>
             <label for="player_one">Player One's Name.</label>
@@ -25,10 +36,10 @@
           <input type="submit" value='Submit' id='add_players' class='start_game'>
         </form>
       </div>
-      <div class='players_turn'>
-        <p>It is now<b class='whos_turn'></b>'s turn</p>
+      <div class='players_turn' style='visibility: hidden;'>
+        <p>It is now <b class='whos_turn'></b>'s turn</p>
       </div>
-      <div class='game_wrapper'>
+      <div class='game_wrapper' style='visibility: hidden;'>
         <div class='player_one'>
           <div class='score_box'>
             <p class='pOneScore'></p>
