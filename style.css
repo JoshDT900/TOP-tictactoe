@@ -125,6 +125,11 @@ body {
   box-shadow: 5px 5px 5px black;
 }
 
+.fairAI,
+.aiCheats {
+  display: none;
+}
+
 .game_type {
   align-items: center;
   justify-content: space-evenly;
