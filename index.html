@@ -12,7 +12,7 @@
       <nav class='nav_bar'>
         <h1>Tic Tac Toe</h1>
       </nav>
-      <div class='game_type'>
+      <div class='game_type' style='display: flex;'>
         <button class='pvpbtn'>
           Player vs Player
         </button>
@@ -40,7 +40,7 @@
         <p>It is now <b class='whos_turn'></b>'s turn</p>
       </div>
       <div class='game_wrapper' style='visibility: hidden;'>
-        <div class='player_one'>
+        <div class='player_one' style='visibility: hidden;'>
           <div class='score_box'>
             <p class='pOneScore'></p>
             <p class='pOne'></p>            
@@ -57,11 +57,17 @@
           <div class="game_box"></div>
           <div class="game_box"></div>
         </div>
-        <div class="player_two">
+        <div class="player_two" style='visibility: hidden;'>
           <div class="score_box">
             <p class='pTwoScore'></p>
             <p class='pTwo'></p>
           </div>          
+        </div>        
+      </div>
+      <div class='game_ended'>
+        <div class='gameEndContent'>
+          <p class="winner"></p>
+          <button type='button' class='new_game'>Play Again</button>
         </div>
       </div>
     </div>    

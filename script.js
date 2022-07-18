@@ -5,6 +5,16 @@ const gameboard = (() => {
   const formTarget = document.querySelector('.player_form');
   const playerVsPlayer = document.querySelector('.pvpbtn')
   const gameBtns = document.querySelector('.game_type')
+  const gameBox = document.querySelector('.game_wrapper')
+  const turnDisplay = document.querySelector('.players_turn')
+  const playOneScore = document.querySelector('.pOne');
+  const platTwoScore = document.querySelector('.pTwo');
+  const pOneScoreNum = document.querySelector('.pOneScore');
+  const pTwoScoreNum = document.querySelector('.pTwoScore');
+  const scoreBox = document.querySelectorAll('.score_box');
+  const pOneBox = document.querySelector('.player_one')
+  const pTwoBox = document.querySelector('.player_two')
+  const playAgain = document.querySelector('.new_game')
   
   
   let game = {
@@ -32,17 +42,30 @@ const gameboard = (() => {
   }
 
   const displayGameChoice = function () {
-    gameBtns.style.display = 'none'
+    if (gameBtns.style.display === 'none') {
+      gameBtns.style.display = 'flex'
+    } else {
+      gameBtns.style.display = 'none'
+    }
+    
   }
 
   const showGame = function () {
-    const gameBox = document.querySelector('.game_wrapper')
-    const turnDisplay = document.querySelector('.players_turn')
-
     turnDisplay.style.visibility = 'visible';
     gameBox.style.visibility = 'visible';
+    pOneBox.style.visibility = 'visible';
+    pTwoBox.style.visibility = 'visible';
   }
 
+  const playAgainFunc = function() {
+    const gameEnd = document.querySelector('.game_ended')
+
+    gameEnd.style.display = 'none';
+  }
+
+  
+  playAgain.addEventListener('click', playAgainFunc)
+  playAgain.addEventListener('click', displayGameChoice)
   
   playerVsPlayer.addEventListener('click', playerFormDisplay)
   playerVsPlayer.addEventListener('click', displayGameChoice)
@@ -59,6 +82,13 @@ const gameboard = (() => {
     drawScore();
   }
 
+  const gameOver = function() {
+    turnDisplay.style.visibility = 'hidden';
+    gameBox.style.visibility = 'hidden';
+    pTwoBox.style.visibility = 'hidden';
+    pOneBox.style.visibility = 'hidden';
+  }
+
   function handleForm(e) {
     e.preventDefault();
 
@@ -71,15 +101,6 @@ const gameboard = (() => {
 
 
   const drawScore = function () {
-    const playOneScore = document.querySelector('.pOne');
-    const platTwoScore = document.querySelector('.pTwo');
-
-    const pOneScoreNum = document.querySelector('.pOneScore');
-    const pTwoScoreNum = document.querySelector('.pTwoScore');
-
-    const scoreBox = document.querySelectorAll('.score_box');
-    scoreBox.forEach(display => display.style.visibility = 'visible');
-
     pOneScoreNum.textContent = `${game.players[0].score}`;
     pTwoScoreNum.textContent = `${game.players[1].score}`;
 
@@ -105,7 +126,17 @@ const gameboard = (() => {
       })
   }
 
-  return { game, playerOneEle, playerTwoEle, drawScore, playerTurn, colorMarker };
+  const winnerScreen = function (name) {
+    const gameEnd = document.querySelector('.game_ended')
+    const winnerDraw = document.querySelector('.winner')
+
+    winnerDraw.textContent = `${name} is the winner!`;
+
+    gameEnd.style.display = 'flex';
+  }
+
+  return { game, playerOneEle, playerTwoEle,
+           drawScore, playerTurn, colorMarker, gameOver, winnerScreen };
 })();
 
 function playGame() {
@@ -117,6 +148,7 @@ function playGame() {
   function placeSquare(e) {
     const arrIndex = Array.from(selectedSquare).indexOf(e.target);
 
+    // Determines turn and round
     if (round % 2 === 0) {
       gameboard.playerTurn(gameboard.game.players[0].name);
       if (turns % 2 === 0) {
@@ -184,7 +216,8 @@ function playGame() {
           gameboard.drawScore();
 
           setTimeout(() => {
-            return alert(`${gameboard.game.players[0].name} has won! Congratulations.`);
+            gameboard.gameOver();
+            return gameboard.winnerScreen(gameboard.game.players[0].name)
           }, 20);
         } else {
           setTimeout(() => {
@@ -214,7 +247,8 @@ function playGame() {
           gameboard.drawScore();
 
           setTimeout(() => {
-            return alert(`${gameboard.game.players[1].name} has won! Congratulations.`);
+            gameboard.gameOver();
+            return gameboard.winnerScreen(gameboard.game.players[1].name);
           }, 20);
         } else {
           setTimeout(() => {

@@ -126,7 +126,6 @@ body {
 }
 
 .game_type {
-  display: flex;
   align-items: center;
   justify-content: space-evenly;
   height: 250px;
@@ -191,10 +190,49 @@ body {
   font-size: 24px;
   box-shadow: 0px 5px 10px grey;
   padding: 10px;
-
-  visibility: hidden;
 }
 
 .score_box p:nth-child(1) {
   font-size: 40px;
+}
+
+.game_ended {
+  position: absolute;
+
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  height: 100vh;
+  width: 100vw;
+
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+.gameEndContent {
+  flex-direction: column;
+  width: 400px;
+  display: flex;
+  gap: 40px;
+  padding: 15px;
+  background-color: maroon;
+  color: white;
+  font-family: 'Obitron Bold';
+  font-size: 25px;
+  border: 5px solid black;
+  align-items: center;
+}
+
+.gameEndContent button {
+  padding: 10px;
+  font-family: 'Obitron Bold';
+  background-color: #383838;
+  color: white;
+  border: 3px solid black;
+}
+
+.gameEndContent button:hover {
+  background-color: white;
+  color: #383838;
 }
