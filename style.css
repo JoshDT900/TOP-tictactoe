@@ -1,0 +1,243 @@
+@font-face {
+  font-family: 'Obitron';
+  src: url(./assets/Font/Orbitron/static/Orbitron-Regular.ttf);
+}
+
+@font-face {
+  font-family: 'Obitron Bold';
+  src: url(./assets/Font/Orbitron/static/Orbitron-Bold.ttf);
+}
+
+
+
+* {
+  padding: 0px;
+  margin: 0px;
+  font-family: 'Obitron', 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+body {
+  height: 100vh;
+}
+
+.container {
+  height: inherit;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav_bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80px;
+  background-color: #252527;
+  color: white;
+}
+
+.player_form {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  gap: 30px;
+  height: auto;
+  padding: 20px;
+  width: 400px;
+  border: 2px solid black;
+  border-radius: 5px;
+  box-shadow: 5px 5px 5px black;
+  background-color: #E31C25;
+  color: white;
+}
+
+#add_players {
+  width: -webkit-fill-available;
+  padding: 10px;
+  background-color: #1C1C1C;
+  outline: none;
+  border: 3px solid black;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 10px;
+}
+
+.form_container {
+  background-color: rgba(0, 0, 0, 0.25);
+  position: absolute;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+}
+
+.player_form label {
+  font-family: 'Obitron Bold';
+}
+
+.player_form input {
+  padding: 6px;
+  outline: none;
+  border: 2px solid black;
+}
+
+.player_form div {
+  width: -webkit-fill-available;
+
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.game_wrapper {
+  height: inherit;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.player_info {
+  display: flex;
+  flex-direction: column;
+}
+
+.players_turn {
+  border: 2px solid black;
+  background-color: maroon;
+  color: white;
+  display: flex;
+  font-size: 30px;
+  font-family: 'Obitron Bold';
+  justify-content: center;
+  align-items: center;
+  height: 75px;
+  padding: 10px;
+}
+
+.game_container {
+  width: 30%;
+  height: 70%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;  
+  box-shadow: 5px 5px 5px black;
+}
+
+.fairAI,
+.aiCheats {
+  display: none;
+}
+
+.game_type {
+  align-items: center;
+  justify-content: space-evenly;
+  height: 250px;
+}
+
+.game_type button {
+  width: 300px;
+  padding: 10px;
+
+  color: white;
+  background-color: maroon;
+  border: 4px solid black;
+
+  font-family: 'Obitron Bold', Arial, Helvetica, sans-serif;
+  font-size: 20px;
+}
+
+.game_type button:hover {
+  color: maroon;
+  background-color: white;
+}
+
+.player_one,
+.player_two {
+  width: 450px;
+}
+
+.pTwoScore {
+  color: maroon;
+}
+
+.game_box {
+  display: flex;
+  border: 2px solid black;
+  align-items: center;
+  justify-content: center;
+  font-size: 60px;
+  background-color: #bbb8b5;
+}
+
+.game_box:nth-child(-n+3) {
+  border-top: none;
+}
+
+.game_box:nth-child(3n+1) {
+  border-left: none;
+}
+
+.game_box:nth-child(3n+3) {
+  border-right: none;
+}
+
+.game_box:nth-child(n+7) {
+  border-bottom: none;
+}
+
+.score_box {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  align-items: center;
+  font-size: 24px;
+  box-shadow: 0px 5px 10px grey;
+  padding: 10px;
+}
+
+.score_box p:nth-child(1) {
+  font-size: 40px;
+}
+
+.game_ended {
+  position: absolute;
+
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  height: 100vh;
+  width: 100vw;
+
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+.gameEndContent {
+  flex-direction: column;
+  width: 400px;
+  display: flex;
+  gap: 40px;
+  padding: 15px;
+  background-color: maroon;
+  color: white;
+  font-family: 'Obitron Bold';
+  font-size: 25px;
+  border: 5px solid black;
+  align-items: center;
+}
+
+.gameEndContent button {
+  padding: 10px;
+  font-family: 'Obitron Bold';
+  background-color: #383838;
+  color: white;
+  border: 3px solid black;
+}
+
+.gameEndContent button:hover {
+  background-color: white;
+  color: #383838;
+}
