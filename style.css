@@ -105,20 +105,35 @@ body {
 }
 
 .players_turn {
+  border: 2px solid black;
+  background-color: maroon;
+  color: white;
   display: flex;
+  font-size: 30px;
+  font-family: 'Obitron Bold';
   justify-content: center;
   align-items: center;
   height: 75px;
+  padding: 10px;
 }
 
 .game_container {
-  width: 600px;
-  height: 600px;
+  width: 30%;
+  height: 70%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;  
   box-shadow: 5px 5px 5px black;
 
+}
+
+.player_one,
+.player_two {
+  width: 450px;
+}
+
+.pTwoScore {
+  color: maroon;
 }
 
 .game_box {

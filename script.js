@@ -1,8 +1,8 @@
 const gameboard = (() => { 
-  const playerOneEle = document.querySelector('#player_one')
-  const playerTwoEle = document.querySelector('#player_two')  
-  const playerForm = document.querySelector('.form_container')
-  const formTarget = document.querySelector('.player_form')
+  const playerOneEle = document.querySelector('#player_one');
+  const playerTwoEle = document.querySelector('#player_two'); 
+  const playerForm = document.querySelector('.form_container');
+  const formTarget = document.querySelector('.player_form');
   
   let game = {
     gameBoard: [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -14,66 +14,79 @@ const gameboard = (() => {
     let marker = 'X';
     
     if (game.players.length > 0) {
-      marker = 'O'
+      marker = 'O';
     } 
     
-    return { name, score, marker }
+    return { name, score, marker };
   }
 
   const playerFormHide = function () {    
-    playerForm.style.visibility = 'hidden' 
+    playerForm.style.visibility = 'hidden';
   }
 
   const setPlayers = function () {
-    playerFormHide()
+    playerFormHide();
      
     game.players = [];
     
     game.players.push(PlayerMaker(playerOneEle.value));
     game.players.push(PlayerMaker(playerTwoEle.value));
 
-    playerTurn(gameboard.game.players[0].name)
-    drawScore()
+    playerTurn(gameboard.game.players[0].name);
+    drawScore();
   }
 
   function handleForm(e) {
-    e.preventDefault()
+    e.preventDefault();
 
-    setPlayers()
-    playGame()
+    setPlayers();
+    playGame();
   }
 
   formTarget.addEventListener('submit', handleForm)
 
   const drawScore = function () {
-    const playOneScore = document.querySelector('.pOne')
-    const platTwoScore = document.querySelector('.pTwo')
+    const playOneScore = document.querySelector('.pOne');
+    const platTwoScore = document.querySelector('.pTwo');
 
-    const pOneScoreNum = document.querySelector('.pOneScore')
-    const pTwoScoreNum = document.querySelector('.pTwoScore')
+    const pOneScoreNum = document.querySelector('.pOneScore');
+    const pTwoScoreNum = document.querySelector('.pTwoScore');
 
-    const scoreBox = document.querySelectorAll('.score_box')
+    const scoreBox = document.querySelectorAll('.score_box');
     scoreBox.forEach(display => display.style.visibility = 'visible');
 
-    pOneScoreNum.textContent = `${game.players[0].score}`
-    pTwoScoreNum.textContent = `${game.players[1].score}`
+    pOneScoreNum.textContent = `${game.players[0].score}`;
+    pTwoScoreNum.textContent = `${game.players[1].score}`;
 
-    playOneScore.textContent = `${game.players[0].name}\'s score.`
-    platTwoScore.textContent = `${game.players[1].name}\'s score.`
+    playOneScore.textContent = `${game.players[0].name}\'s score.`;
+    platTwoScore.textContent = `${game.players[1].name}\'s score.`;
   }
 
   const playerTurn = function (name) {
-    const whosTurn = document.querySelector('.whos_turn')
+    const whosTurn = document.querySelector('.whos_turn');
 
-    whosTurn.textContent = `It is now ${name}'s turn.`
-  }  
+    whosTurn.textContent = ` ${name} `;
+  }
 
-  return { game, playerOneEle, playerTwoEle, drawScore, playerTurn }
+  const colorMarker = function() {    
+      const selectedSquare = document.querySelectorAll('.game_box')
+    
+      selectedSquare.forEach(marker => {
+        if (marker.textContent === "X") {
+          marker.style.color = 'black';
+        } else if (marker.textContent === "O") {
+          marker.style.color = 'maroon';
+        }
+      })
+  }
+
+  return { game, playerOneEle, playerTwoEle, drawScore, playerTurn, colorMarker };
 })();
 
 function playGame() {
   const selectedSquare = document.querySelectorAll('.game_box')
   let turns = 0;
+  let round = 0;
  
   // Handles populating gameboard values and placement based on user choice
   function placeSquare(e) {
@@ -81,100 +94,103 @@ function playGame() {
 
     if (turns % 2 === 0) {
       turns++;
-      gameboard.playerTurn(gameboard.game.players[1].name)
+      gameboard.playerTurn(gameboard.game.players[1].name);
       gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[0].marker);
       e.target.innerHTML = gameboard.game.players[0].marker;
       e.target.removeEventListener('click', placeSquare);
+      gameboard.colorMarker();
     } else if (turns % 2 === 1) {
       turns++;
-      gameboard.playerTurn(gameboard.game.players[0].name)
+      gameboard.playerTurn(gameboard.game.players[0].name);
       gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[1].marker);
       e.target.innerHTML = gameboard.game.players[1].marker;
       e.target.removeEventListener('click', placeSquare);
+      gameboard.colorMarker();
     } 
 
     // Checks who wins or if it's a tie
     setTimeout(() => {
-      const gameString = gameboard.game.gameBoard.join("")
+      const gameString = gameboard.game.gameBoard.join("");
       const playOneWins = new RegExp(
         "^(XXX)|^.{3}(XXX)|(X.{2})(X.{2})(X.{2})|(XXX)$|(.{2}X)(.{2}X)(.{2}X)|(.X.)(.X.)(.X.)|(X.{2})(.X.)(.{2}X)|(.{2}X)(.X.)(X.{2})"
-        )
+        );
       const playTwoWins = new RegExp (
         "^(OOO)|^.{3}(OOO)|(O.{2})(O.{2})(O.{2})|(OOO)$|(.{2}O)(.{2}O)(.{2}O)|(.O.)(.O.)(.O.)|(O.{2})(.O.)(.{2}O)|(.{2}O)(.O.)(O.{2})"
-      )
+      );
       
       if (playOneWins.test(gameString)) {
-        gameboard.game.players[0].score++
-        gameboard.drawScore()
-        gameboard.playerTurn(gameboard.game.players[0].name)
+        gameboard.game.players[0].score++;
+        gameboard.drawScore();
+        
         gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
-        turns = 0
+        turns = 0;
 
         for (let e of selectedSquare){
           e.innerHTML = " ";
         }
 
         selectedSquare.forEach(cell => {
-          cell.addEventListener('click', placeSquare)
+          cell.addEventListener('click', placeSquare);
         })
 
         if (gameboard.game.players[0].score === 3) {
           gameboard.game.players[0].score = 0;
           gameboard.game.players[1].score = 0;
-          gameboard.drawScore()
+          gameboard.drawScore();
 
           setTimeout(() => {
-            return alert(`${gameboard.game.players[0].name} has won! Congratulations.`)
+            return alert(`${gameboard.game.players[0].name} has won! Congratulations.`);
           }, 20);
         } else {
           setTimeout(() => {
+            round++;
             return alert(`${gameboard.game.players[0].name} has won the round!`);
           }, 25);
         }                
-        
+      
       } else if (playTwoWins.test(gameString)) {
-        gameboard.game.players[1].score++
-        gameboard.drawScore()
-        gameboard.playerTurn(gameboard.game.players[0].name)
-        gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
-        turns = 0
+        gameboard.game.players[1].score++;
+        gameboard.drawScore();
+
+        gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
+        turns = 0;
 
         for (let e of selectedSquare){
           e.innerHTML = " ";
         }
 
         selectedSquare.forEach(cell => {
-          cell.addEventListener('click', placeSquare)
+          cell.addEventListener('click', placeSquare);
         })     
 
         if (gameboard.game.players[1].score === 3) {
           gameboard.game.players[0].score = 0;
           gameboard.game.players[1].score = 0;
-          gameboard.drawScore()
+          gameboard.drawScore();
 
           setTimeout(() => {
-            return alert(`${gameboard.game.players[1].name} has won! Congratulations.`)
+            return alert(`${gameboard.game.players[1].name} has won! Congratulations.`);
           }, 20);
         } else {
           setTimeout(() => {
+            round++;
             return alert(`${gameboard.game.players[1].name} has won the round!`);
           }, 25);  
         }
         
       } else if (turns === 9) {
-        gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
-        gameboard.drawScore()
-        turns = 0
+        gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
+        gameboard.drawScore();
+        turns = 0;
+        round++;
 
         for (let e of selectedSquare){
           e.innerHTML = " ";
         }
 
         selectedSquare.forEach(cell => {
-          cell.addEventListener('click', placeSquare)
+          cell.addEventListener('click', placeSquare);
         })
-
-        gameboard.playerTurn(gameboard.game.players[0].name)
 
         return alert('It\'s a tie!');
       }
@@ -182,6 +198,6 @@ function playGame() {
   }  
 
   selectedSquare.forEach(cell => {
-    cell.addEventListener('click', placeSquare)
+    cell.addEventListener('click', placeSquare);
   })
 }
