@@ -139,6 +139,29 @@ const gameboard = (() => {
            drawScore, playerTurn, colorMarker, gameOver, winnerScreen };
 })();
 
+const popUps = (() => {
+  const winDiv = document.createElement('div')
+  const winP = document.createElement('p')
+  const containerElem = document.querySelector('.container')
+
+  winDiv.appendChild(winP);
+  winDiv.classList.add('winner_popup')
+  winDiv.style.display = 'none';
+
+  const turnWinner = function(name) {
+    containerElem.appendChild(winDiv)    
+    winP.textContent = `${name} has won the round`;
+
+    winDiv.style = "position: absolute; display: flex; height: inherit; width: 100%; align-items: center; justify-content: center; background-color: rgba(0, 0, 0, 0.25);"
+
+    setTimeout(() => {
+      winDiv.style.display = 'none'
+    }, 2000)
+  }
+
+  return { turnWinner }
+})();
+
 function playGame() {
   const selectedSquare = document.querySelectorAll('.game_box')
   let turns = 0;
@@ -222,7 +245,7 @@ function playGame() {
         } else {
           setTimeout(() => {
             round++;
-            return alert(`${gameboard.game.players[0].name} has won the round!`);
+            return popUps.turnWinner(gameboard.game.players[0].name)
           }, 25);
         }                
       
@@ -253,7 +276,7 @@ function playGame() {
         } else {
           setTimeout(() => {
             round++;
-            return alert(`${gameboard.game.players[1].name} has won the round!`);
+            return popUps.turnWinner(gameboard.game.players[1].name);
           }, 25);  
         }
         
