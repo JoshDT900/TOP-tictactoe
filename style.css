@@ -35,7 +35,8 @@ body {
   color: white;
 }
 
-.player_form {
+.player_form,
+.cpu_form {
   margin: auto;
   display: flex;
   flex-direction: column;
@@ -49,23 +50,25 @@ body {
   border: 2px solid black;
   border-radius: 5px;
   box-shadow: 5px 5px 5px black;
-  background-color: #E31C25;
+  background-color: maroon;
   color: white;
 }
 
-#add_players {
-  width: -webkit-fill-available;
+#add_players, 
+#add_players_cpu {
+  width: 40%;
   padding: 10px;
-  background-color: #1C1C1C;
+  background-color: #919191;
   outline: none;
   border: 3px solid black;
-  color: white;
-  font-size: 20px;
+  color: rgb(0, 0, 0);
+  font-size: 18px;
   font-weight: bold;
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
-.form_container {
+.form_container,
+.form_container_cpu {
   background-color: rgba(0, 0, 0, 0.25);
   position: absolute;
   height: 100vh;
@@ -73,17 +76,29 @@ body {
   display: flex;
 }
 
-.player_form label {
+.player_form label,
+.cpu_form label {
   font-family: 'Obitron Bold';
 }
 
-.player_form input {
+
+
+.player_form input,
+.cpu_form input {
   padding: 6px;
   outline: none;
   border: 2px solid black;
 }
 
-.player_form div {
+.player_form input:focus,
+.cpu_form input:focus {
+  padding: 6px;
+  outline: none;
+  border: 2px solid rgb(153, 153, 153);
+}
+
+.player_form div,
+.cpu_form div {
   width: -webkit-fill-available;
 
   display: flex;
@@ -130,7 +145,6 @@ body {
   box-shadow: 5px 5px 5px black;
 }
 
-.fairAI,
 .aiCheats {
   display: none;
 }

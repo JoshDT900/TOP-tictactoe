@@ -33,15 +33,15 @@ const gameboard = (() => {
     return { name, score, marker };
   }
 
-  const playerFormDisplay = function () {
-    if (playerForm.style.visibility === 'hidden') {
-      playerForm.style.visibility = 'visible';
+  const playerFormDisplay = function(form) {
+    if (form.style.visibility === 'hidden') {
+      form.style.visibility = 'visible';
     } else {
-      playerForm.style.visibility = 'hidden';
+      form.style.visibility = 'hidden';
     }
   }
 
-  const displayGameChoice = function () {
+  const displayGameChoice = function() {
     if (gameBtns.style.display === 'none') {
       gameBtns.style.display = 'flex'
     } else {
@@ -50,7 +50,7 @@ const gameboard = (() => {
     
   }
 
-  const showGame = function () {
+  const showGame = function() {
     turnDisplay.style.visibility = 'visible';
     gameBox.style.visibility = 'visible';
     pOneBox.style.visibility = 'visible';
@@ -71,7 +71,7 @@ const gameboard = (() => {
   playerVsPlayer.addEventListener('click', displayGameChoice)
 
   const setPlayers = function () {
-    playerFormDisplay();
+    playerFormDisplay(playerForm);
      
     game.players = [];
     
@@ -136,7 +136,7 @@ const gameboard = (() => {
   }
 
   return { game, playerOneEle, playerTwoEle,
-           drawScore, playerTurn, colorMarker, gameOver, winnerScreen };
+           drawScore, playerTurn, displayGameChoice, colorMarker, gameOver, winnerScreen, playerFormDisplay, showGame };
 })();
 
 const popUps = (() => {
@@ -150,7 +150,7 @@ const popUps = (() => {
 
   const turnWinner = function(name) {
     containerElem.appendChild(winDiv)    
-    winP.textContent = `${name} has won the round`;
+    winP.textContent = `${name}`;
 
     winDiv.style = "position: absolute; display: flex; height: inherit; width: 100%; align-items: center; justify-content: center; background-color: rgba(0, 0, 0, 0.25);"
 
@@ -162,6 +162,49 @@ const popUps = (() => {
   return { turnWinner }
 })();
 
+const versusComputer = (() => {
+  const cpuFormDisplay = document.querySelector('.form_container_cpu')
+  const cpuFormSubmit = document.querySelector('.cpu_form')
+  const cpuPlayerOne = document.querySelector('#player_one_cpu')
+  const playVsCpu = document.querySelector('.fairAI')  
+
+  const handleForm = function(e) {
+    e.preventDefault()
+
+    setPlayersCpu()
+    playGame();
+    gameboard.displayGameChoice();
+    gameboard.showGame();
+  }
+
+  const CpuPlayerMaker = (name) => {
+    let score = 0;
+    let marker = 'X';
+    
+    if (gameboard.game.players.length > 0) {
+      marker = 'O';
+    } 
+    
+    return { name, score, marker };
+  }
+
+  const setPlayersCpu = function () {
+    gameboard.playerFormDisplay(cpuFormDisplay);
+     
+    gameboard.game.players = [];
+    
+    gameboard.game.players.push(CpuPlayerMaker(cpuPlayerOne.value));
+    gameboard.game.players.push(CpuPlayerMaker('Computer'));
+
+    gameboard.playerTurn(gameboard.game.players[0].name);
+    gameboard.drawScore();
+  }
+
+  cpuFormSubmit.addEventListener('submit', handleForm)
+  playVsCpu.addEventListener('click', () => {gameboard.playerFormDisplay(cpuFormDisplay)})
+
+})();
+
 function playGame() {
   const selectedSquare = document.querySelectorAll('.game_box')
   let turns = 0;
@@ -171,15 +214,46 @@ function playGame() {
   function placeSquare(e) {
     const arrIndex = Array.from(selectedSquare).indexOf(e.target);
 
+    const cpuPlace = function() {
+      let track = 0      
+
+      while (track == 0) {
+        let randNum = Math.floor(Math.random() * 9);
+
+        if (gameboard.game.gameBoard[randNum] != "X" || gameboard.game.gameBoard[randNum] != "O"){
+          gameboard.game.gameBoard.splice(randNum, 1, gameboard.game.players[1].marker);
+          selectedSquare[randNum].innerHTML = gameboard.game.players[1].marker;
+          track++;
+        }
+      }
+
+      turns++;
+    }
+
     // Determines turn and round
     if (round % 2 === 0) {
       gameboard.playerTurn(gameboard.game.players[0].name);
-      if (turns % 2 === 0) {
+      if (turns % 2 === 0 && gameboard.game.players[1].name === 'Computer') {
+        cpuPlace()
+        
+        gameboard.playerTurn(gameboard.game.players[1].name);
+        gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[0].marker);
+        e.target.innerHTML = gameboard.game.players[0].marker;
+        e.target.removeEventListener('change', placeSquare);
+        gameboard.colorMarker();
+      } else if(turns % 2 === 0) {
         turns++;
         gameboard.playerTurn(gameboard.game.players[1].name);
         gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[0].marker);
         e.target.innerHTML = gameboard.game.players[0].marker;
         e.target.removeEventListener('click', placeSquare);
+        gameboard.colorMarker();
+      } else if (turns % 2 === 1 && gameboard.game.players[1].name === 'Computer') {
+        cpuPlace()
+
+        gameboard.playerTurn(gameboard.game.players[1].name);
+        e.target.innerHTML = gameboard.game.players[0].marker;
+        e.target.removeEventListener('change', placeSquare);
         gameboard.colorMarker();
       } else if (turns % 2 === 1) {
         turns++;
@@ -191,20 +265,34 @@ function playGame() {
       }
     } else if (round % 2 === 1) {
       gameboard.playerTurn(gameboard.game.players[1].name);
-      if (turns % 2 === 0) {
-        turns++;
-        gameboard.playerTurn(gameboard.game.players[0].name);
-        gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[1].marker);
-        e.target.innerHTML = gameboard.game.players[1].marker;
-        e.target.removeEventListener('click', placeSquare);
-        gameboard.colorMarker();
+      if (turns % 2 === 0 && gameboard.game.players[1].name === 'Computer') {
+          cpuPlace()
+
+          gameboard.playerTurn(gameboard.game.players[0].name);
+          gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[1].marker);
+          e.target.innerHTML = gameboard.game.players[1].marker;
+          e.target.removeEventListener('click', placeSquare);
+          gameboard.colorMarker();
+      } else if (turns % 2 === 0) {
+          turns++;
+          gameboard.playerTurn(gameboard.game.players[0].name);
+          gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[1].marker);
+          e.target.innerHTML = gameboard.game.players[1].marker;
+          e.target.removeEventListener('click', placeSquare);
+      } else if (turns % 2 === 1 && gameboard.game.players[1].name === 'Computer') {
+          cpuPlace()
+
+          gameboard.playerTurn(gameboard.game.players[1].name);
+          e.target.innerHTML = gameboard.game.players[0].marker;
+          e.target.removeEventListener('click', placeSquare);
+          gameboard.colorMarker();
       } else if (turns % 2 === 1) {
-        turns++;
-        gameboard.playerTurn(gameboard.game.players[1].name);
-        gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[0].marker);
-        e.target.innerHTML = gameboard.game.players[0].marker;
-        e.target.removeEventListener('click', placeSquare);
-        gameboard.colorMarker();
+          turns++;
+          gameboard.playerTurn(gameboard.game.players[1].name);
+          gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[0].marker);
+          e.target.innerHTML = gameboard.game.players[0].marker;
+          e.target.removeEventListener('click', placeSquare);
+          gameboard.colorMarker();
       } 
     }
 
@@ -245,7 +333,7 @@ function playGame() {
         } else {
           setTimeout(() => {
             round++;
-            return popUps.turnWinner(gameboard.game.players[0].name)
+            return popUps.turnWinner(`${gameboard.game.players[0].name} has won the round!`)
           }, 25);
         }                
       
@@ -276,7 +364,7 @@ function playGame() {
         } else {
           setTimeout(() => {
             round++;
-            return popUps.turnWinner(gameboard.game.players[1].name);
+            return popUps.turnWinner(`${gameboard.game.players[1].name} has won the round!`);
           }, 25);  
         }
         
@@ -294,12 +382,16 @@ function playGame() {
           cell.addEventListener('click', placeSquare);
         })
 
-        return alert('It\'s a tie!');
+        return popUps.turnWinner('It\'s a tie!');
       }
     }, 25)
-  }  
+  }
+
+  const once = {
+    once : true
+  };
 
   selectedSquare.forEach(cell => {
-    cell.addEventListener('click', placeSquare);
+    cell.addEventListener('click', placeSquare, once);
   })
 }
