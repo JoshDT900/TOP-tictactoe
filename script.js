@@ -313,11 +313,11 @@ function playGame() {
       }, 25);        
       }
 
-      //Finds empty value in the gameboard to place a marker
+      
       while (track === 0 && turns != 9) {
         let randNum = Math.floor(Math.random() * 9);
 
-        // Checks for a winner before max turns
+        // Checks for a winner in AI game before max turns
         setTimeout(() => {
           const gameString = gameboard.game.gameBoard.join("");
           const playOneWins = new RegExp(
@@ -375,7 +375,8 @@ function playGame() {
             }
           }
         }, 25);
-        
+
+        //Finds empty value in the gameboard to place a marker
         if (gameboard.game.gameBoard[randNum] != "X" && gameboard.game.gameBoard[randNum] != "O"){          
             gameboard.game.gameBoard.splice(randNum, 1, gameboard.game.players[1].marker);
             selectedSquare[randNum].innerHTML = gameboard.game.players[1].marker;
@@ -388,6 +389,7 @@ function playGame() {
       }
     }
 
+    // Handles turns and marker placement in PvP and AI games
      if (round % 2 === 0) {
       gameboard.playerTurn(gameboard.game.players[0].name);
       if (gameboard.game.players[1].name === 'Computer') {
@@ -436,7 +438,7 @@ function playGame() {
       } 
     }
 
-    // Checks who wins or if it's a tie
+    // Checks who wins or if it's a tie in PvP mode
     if (gameboard.game.players[1].name != 'Computer') {
       setTimeout(() => {
         const gameString = gameboard.game.gameBoard.join("");
