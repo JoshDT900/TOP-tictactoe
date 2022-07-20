@@ -67,12 +67,10 @@ const gameboard = (() => {
   playAgain.addEventListener('click', playAgainFunc)
   playAgain.addEventListener('click', displayGameChoice)
   
-  playerVsPlayer.addEventListener('click', playerFormDisplay)
+  playerVsPlayer.addEventListener('click', () => {playerFormDisplay(playerForm)})
   playerVsPlayer.addEventListener('click', displayGameChoice)
 
-  const setPlayers = function () {
-    playerFormDisplay(playerForm);
-     
+  const setPlayers = function () {     
     game.players = [];
     
     game.players.push(PlayerMaker(playerOneEle.value));
@@ -80,6 +78,7 @@ const gameboard = (() => {
 
     playerTurn(gameboard.game.players[0].name);
     drawScore();
+    playerFormDisplay(playerForm);
   }
 
   const gameOver = function() {
@@ -215,15 +214,19 @@ function playGame() {
     const arrIndex = Array.from(selectedSquare).indexOf(e.target);
 
     const cpuPlace = function() {
-      let track = 0      
+      let track = 0;     
 
-      while (track == 0) {
+      while (track === 0 && turns != 8) {
         let randNum = Math.floor(Math.random() * 9);
 
-        if (gameboard.game.gameBoard[randNum] != "X" || gameboard.game.gameBoard[randNum] != "O"){
+        if (gameboard.game.gameBoard[randNum] != "X" && gameboard.game.gameBoard[randNum] === " " && gameboard.game.gameBoard[randNum] != "O"){
           gameboard.game.gameBoard.splice(randNum, 1, gameboard.game.players[1].marker);
           selectedSquare[randNum].innerHTML = gameboard.game.players[1].marker;
+          selectedSquare[randNum].removeEventListener('click', placeSquare)
+          gameboard.colorMarker();
           track++;
+          turns++;
+          gameboard.playerTurn(gameboard.game.players[0].name);
         }
       }
 
@@ -233,27 +236,19 @@ function playGame() {
     // Determines turn and round
     if (round % 2 === 0) {
       gameboard.playerTurn(gameboard.game.players[0].name);
-      if (turns % 2 === 0 && gameboard.game.players[1].name === 'Computer') {
-        cpuPlace()
-        
+      if (turns % 2 === 0 && gameboard.game.players[1].name === 'Computer') {        
         gameboard.playerTurn(gameboard.game.players[1].name);
         gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[0].marker);
         e.target.innerHTML = gameboard.game.players[0].marker;
-        e.target.removeEventListener('change', placeSquare);
-        gameboard.colorMarker();
+        e.target.removeEventListener('click', placeSquare);
+
+        cpuPlace();
       } else if(turns % 2 === 0) {
         turns++;
         gameboard.playerTurn(gameboard.game.players[1].name);
         gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[0].marker);
         e.target.innerHTML = gameboard.game.players[0].marker;
         e.target.removeEventListener('click', placeSquare);
-        gameboard.colorMarker();
-      } else if (turns % 2 === 1 && gameboard.game.players[1].name === 'Computer') {
-        cpuPlace()
-
-        gameboard.playerTurn(gameboard.game.players[1].name);
-        e.target.innerHTML = gameboard.game.players[0].marker;
-        e.target.removeEventListener('change', placeSquare);
         gameboard.colorMarker();
       } else if (turns % 2 === 1) {
         turns++;
@@ -264,40 +259,25 @@ function playGame() {
         gameboard.colorMarker();
       }
     } else if (round % 2 === 1) {
-      gameboard.playerTurn(gameboard.game.players[1].name);
-      if (turns % 2 === 0 && gameboard.game.players[1].name === 'Computer') {
-          cpuPlace()
-
-          gameboard.playerTurn(gameboard.game.players[0].name);
-          gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[1].marker);
-          e.target.innerHTML = gameboard.game.players[1].marker;
-          e.target.removeEventListener('click', placeSquare);
-          gameboard.colorMarker();
-      } else if (turns % 2 === 0) {
-          turns++;
-          gameboard.playerTurn(gameboard.game.players[0].name);
-          gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[1].marker);
-          e.target.innerHTML = gameboard.game.players[1].marker;
-          e.target.removeEventListener('click', placeSquare);
-      } else if (turns % 2 === 1 && gameboard.game.players[1].name === 'Computer') {
-          cpuPlace()
-
-          gameboard.playerTurn(gameboard.game.players[1].name);
-          e.target.innerHTML = gameboard.game.players[0].marker;
-          e.target.removeEventListener('click', placeSquare);
-          gameboard.colorMarker();
+      gameboard.playerTurn(gameboard.game.players[1].name);      
+      if (turns % 2 === 0) {
+        turns++;
+        gameboard.playerTurn(gameboard.game.players[0].name);
+        gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[1].marker);
+        e.target.innerHTML = gameboard.game.players[1].marker;
+        e.target.removeEventListener('click', placeSquare);
       } else if (turns % 2 === 1) {
-          turns++;
-          gameboard.playerTurn(gameboard.game.players[1].name);
-          gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[0].marker);
-          e.target.innerHTML = gameboard.game.players[0].marker;
-          e.target.removeEventListener('click', placeSquare);
-          gameboard.colorMarker();
+        turns++;
+        gameboard.playerTurn(gameboard.game.players[1].name);
+        gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[0].marker);
+        e.target.innerHTML = gameboard.game.players[0].marker;
+        e.target.removeEventListener('click', placeSquare);
+        gameboard.colorMarker();
       } 
     }
 
     // Checks who wins or if it's a tie
-    setTimeout(() => {
+    
       const gameString = gameboard.game.gameBoard.join("");
       const playOneWins = new RegExp(
         "^(XXX)|^.{3}(XXX)|(X.{2})(X.{2})(X.{2})|(XXX)$|(.{2}X)(.{2}X)(.{2}X)|(.X.)(.X.)(.X.)|(X.{2})(.X.)(.{2}X)|(.{2}X)(.X.)(X.{2})"
@@ -321,13 +301,14 @@ function playGame() {
           cell.addEventListener('click', placeSquare);
         })
 
-        if (gameboard.game.players[0].score === 3) {
+        if (gameboard.game.players[0].score === 3 || gameboard.game.players[0].score === 1 && gameboard.game.players[1].name === 'Computer') {
           gameboard.game.players[0].score = 0;
           gameboard.game.players[1].score = 0;
           gameboard.drawScore();
 
           setTimeout(() => {
             gameboard.gameOver();
+            round = 0;
             return gameboard.winnerScreen(gameboard.game.players[0].name)
           }, 20);
         } else {
@@ -352,13 +333,14 @@ function playGame() {
           cell.addEventListener('click', placeSquare);
         })     
 
-        if (gameboard.game.players[1].score === 3) {
+        if (gameboard.game.players[1].score === 3 || gameboard.game.players[1].score === 1 && gameboard.game.players[1].name === 'Computer') {
           gameboard.game.players[0].score = 0;
           gameboard.game.players[1].score = 0;
           gameboard.drawScore();
 
           setTimeout(() => {
             gameboard.gameOver();
+            round = 0;
             return gameboard.winnerScreen(gameboard.game.players[1].name);
           }, 20);
         } else {
@@ -372,7 +354,6 @@ function playGame() {
         gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
         gameboard.drawScore();
         turns = 0;
-        round++;
 
         for (let e of selectedSquare){
           e.innerHTML = " ";
@@ -384,14 +365,9 @@ function playGame() {
 
         return popUps.turnWinner('It\'s a tie!');
       }
-    }, 25)
   }
 
-  const once = {
-    once : true
-  };
-
   selectedSquare.forEach(cell => {
-    cell.addEventListener('click', placeSquare, once);
+    cell.addEventListener('click', placeSquare);
   })
 }
