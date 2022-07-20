@@ -35,7 +35,8 @@ body {
   color: white;
 }
 
-.player_form {
+.player_form,
+.cpu_form {
   margin: auto;
   display: flex;
   flex-direction: column;
@@ -49,23 +50,25 @@ body {
   border: 2px solid black;
   border-radius: 5px;
   box-shadow: 5px 5px 5px black;
-  background-color: #E31C25;
+  background-color: maroon;
   color: white;
 }
 
-#add_players {
-  width: -webkit-fill-available;
+#add_players, 
+#add_players_cpu {
+  width: 40%;
   padding: 10px;
-  background-color: #1C1C1C;
+  background-color: #919191;
   outline: none;
   border: 3px solid black;
-  color: white;
-  font-size: 20px;
+  color: rgb(0, 0, 0);
+  font-size: 18px;
   font-weight: bold;
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
-.form_container {
+.form_container,
+.form_container_cpu {
   background-color: rgba(0, 0, 0, 0.25);
   position: absolute;
   height: 100vh;
@@ -73,17 +76,29 @@ body {
   display: flex;
 }
 
-.player_form label {
+.player_form label,
+.cpu_form label {
   font-family: 'Obitron Bold';
 }
 
-.player_form input {
+
+
+.player_form input,
+.cpu_form input {
   padding: 6px;
   outline: none;
   border: 2px solid black;
 }
 
-.player_form div {
+.player_form input:focus,
+.cpu_form input:focus {
+  padding: 6px;
+  outline: none;
+  border: 2px solid rgb(153, 153, 153);
+}
+
+.player_form div,
+.cpu_form div {
   width: -webkit-fill-available;
 
   display: flex;
@@ -92,7 +107,8 @@ body {
 }
 
 .game_wrapper {
-  height: inherit;
+  margin-top: 25px;
+  height: 590px;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
@@ -104,28 +120,31 @@ body {
 }
 
 .players_turn {
-  border: 2px solid black;
-  background-color: maroon;
-  color: white;
   display: flex;
   font-size: 30px;
   font-family: 'Obitron Bold';
   justify-content: center;
   align-items: center;
-  height: 75px;
+  min-height: 75px;
   padding: 10px;
 }
 
+.players_turn p {
+  background-color: maroon;
+  color: white;
+  padding: 20px;
+  border: 3px solid black;
+}
+
 .game_container {
-  width: 30%;
-  height: 70%;
+  width: 600px;
+  height: 600px;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;  
+  grid-template-columns: repeat(3, minmax(125px, 1fr));
+  grid-template-rows: 1fr 1fr 1fr;
   box-shadow: 5px 5px 5px black;
 }
 
-.fairAI,
 .aiCheats {
   display: none;
 }
@@ -155,7 +174,7 @@ body {
 
 .player_one,
 .player_two {
-  width: 450px;
+  width: 350px;
 }
 
 .pTwoScore {
@@ -240,4 +259,14 @@ body {
 .gameEndContent button:hover {
   background-color: white;
   color: #383838;
+}
+
+.winner_popup p {
+  font-size: 40px;
+  padding: 20px;
+  background-color: maroon;
+  border: 4px solid black;
+  border-radius: 5px;
+  color: white;
+  font-family: 'Obitron Bold';
 }

@@ -10,8 +10,7 @@ const gameboard = (() => {
   const playOneScore = document.querySelector('.pOne');
   const platTwoScore = document.querySelector('.pTwo');
   const pOneScoreNum = document.querySelector('.pOneScore');
-  const pTwoScoreNum = document.querySelector('.pTwoScore');
-  const scoreBox = document.querySelectorAll('.score_box');
+  const pTwoScoreNum = document.querySelector('.pTwoScore');  
   const pOneBox = document.querySelector('.player_one')
   const pTwoBox = document.querySelector('.player_two')
   const playAgain = document.querySelector('.new_game')
@@ -33,15 +32,15 @@ const gameboard = (() => {
     return { name, score, marker };
   }
 
-  const playerFormDisplay = function () {
-    if (playerForm.style.visibility === 'hidden') {
-      playerForm.style.visibility = 'visible';
+  const playerFormDisplay = function(form) {
+    if (form.style.visibility === 'hidden') {
+      form.style.visibility = 'visible';
     } else {
-      playerForm.style.visibility = 'hidden';
+      form.style.visibility = 'hidden';
     }
   }
 
-  const displayGameChoice = function () {
+  const displayGameChoice = function() {
     if (gameBtns.style.display === 'none') {
       gameBtns.style.display = 'flex'
     } else {
@@ -50,7 +49,7 @@ const gameboard = (() => {
     
   }
 
-  const showGame = function () {
+  const showGame = function() {
     turnDisplay.style.visibility = 'visible';
     gameBox.style.visibility = 'visible';
     pOneBox.style.visibility = 'visible';
@@ -67,12 +66,10 @@ const gameboard = (() => {
   playAgain.addEventListener('click', playAgainFunc)
   playAgain.addEventListener('click', displayGameChoice)
   
-  playerVsPlayer.addEventListener('click', playerFormDisplay)
+  playerVsPlayer.addEventListener('click', () => {playerFormDisplay(playerForm)})
   playerVsPlayer.addEventListener('click', displayGameChoice)
 
-  const setPlayers = function () {
-    playerFormDisplay();
-     
+  const setPlayers = function () {     
     game.players = [];
     
     game.players.push(PlayerMaker(playerOneEle.value));
@@ -80,6 +77,7 @@ const gameboard = (() => {
 
     playerTurn(gameboard.game.players[0].name);
     drawScore();
+    playerFormDisplay(playerForm);
   }
 
   const gameOver = function() {
@@ -95,6 +93,7 @@ const gameboard = (() => {
     setPlayers();
     playGame();
     showGame();
+    popUps.scoreBoxDisplayShow()
   }
 
   formTarget.addEventListener('submit', handleForm)
@@ -136,22 +135,274 @@ const gameboard = (() => {
   }
 
   return { game, playerOneEle, playerTwoEle,
-           drawScore, playerTurn, colorMarker, gameOver, winnerScreen };
+           drawScore, playerTurn, displayGameChoice, colorMarker, gameOver, winnerScreen, playerFormDisplay, showGame };
+})();
+
+const popUps = (() => {
+  const winDiv = document.createElement('div')
+  const winP = document.createElement('p')
+  const containerElem = document.querySelector('.container')
+  const scoreBox = document.querySelectorAll('.score_box');
+
+  winDiv.appendChild(winP);
+  winDiv.classList.add('winner_popup')
+  winDiv.style.display = 'none';
+
+  const turnWinner = function(name) {
+    containerElem.appendChild(winDiv)    
+    winP.textContent = `${name}`;
+
+    winDiv.style = "position: absolute; display: flex; height: inherit; width: 100%; align-items: center; justify-content: center; background-color: rgba(0, 0, 0, 0.25);"
+
+    setTimeout(() => {
+      winDiv.style.display = 'none'
+    }, 2000)
+  }
+
+  const scoreBoxDisplayShow = function() {
+    scoreBox.forEach( box => box.style.display = 'flex' );
+  }
+
+  const scoreBoxDisplayHide = function () {
+    scoreBox.forEach( box => box.style.display = 'none')
+  }
+
+  return { turnWinner, scoreBoxDisplayShow, scoreBoxDisplayHide }
+})();
+
+const versusComputer = (() => {
+  const cpuFormDisplay = document.querySelector('.form_container_cpu')
+  const cpuFormSubmit = document.querySelector('.cpu_form')
+  const cpuPlayerOne = document.querySelector('#player_one_cpu')
+  const playVsCpu = document.querySelector('.fairAI')  
+
+  const handleForm = function(e) {
+    e.preventDefault()
+    popUps.scoreBoxDisplayHide();
+
+    setPlayersCpu()
+    playGame();
+    gameboard.displayGameChoice();
+    gameboard.showGame();
+  }
+
+  const CpuPlayerMaker = (name) => {
+    let score = 0;
+    let marker = 'X';
+    
+    if (gameboard.game.players.length > 0) {
+      marker = 'O';
+    } 
+    
+    return { name, score, marker };
+  }
+
+  const setPlayersCpu = function () {
+    gameboard.playerFormDisplay(cpuFormDisplay);
+     
+    gameboard.game.players = [];
+    
+    gameboard.game.players.push(CpuPlayerMaker(cpuPlayerOne.value));
+    gameboard.game.players.push(CpuPlayerMaker('Computer'));
+
+    gameboard.playerTurn(gameboard.game.players[0].name);
+  }
+
+  cpuFormSubmit.addEventListener('submit', handleForm)
+  playVsCpu.addEventListener('click', () => {gameboard.playerFormDisplay(cpuFormDisplay)})
+
 })();
 
 function playGame() {
   const selectedSquare = document.querySelectorAll('.game_box')
   let turns = 0;
   let round = 0;
+
+  const once = {
+    once: true
+  }
+
+  selectedSquare.forEach(cell => {
+    cell.addEventListener('click', placeSquare, once);
+  })
  
   // Handles populating gameboard values and placement based on user choice
   function placeSquare(e) {
     const arrIndex = Array.from(selectedSquare).indexOf(e.target);
 
-    // Determines turn and round
-    if (round % 2 === 0) {
+    //Logic handling for AI
+    const cpuPlace = function() {
       gameboard.playerTurn(gameboard.game.players[0].name);
-      if (turns % 2 === 0) {
+      let track = 0;
+
+      // Checks winner in AI game at max turns
+      if (turns === 9) {
+        setTimeout(() => {
+        const gameString = gameboard.game.gameBoard.join("");
+        const playOneWins = new RegExp(
+          "^(XXX)|^.{3}(XXX)|(X.{2})(X.{2})(X.{2})|(XXX)$|(.{2}X)(.{2}X)(.{2}X)|(.X.)(.X.)(.X.)|(X.{2})(.X.)(.{2}X)|(.{2}X)(.X.)(X.{2})"
+          );
+        const playTwoWins = new RegExp (
+          "^(OOO)|^.{3}(OOO)|(O.{2})(O.{2})(O.{2})|(OOO)$|(.{2}O)(.{2}O)(.{2}O)|(.O.)(.O.)(.O.)|(O.{2})(.O.)(.{2}O)|(.{2}O)(.O.)(O.{2})"
+        );
+        
+        if (playOneWins.test(gameString)) {
+          gameboard.game.players[0].score++;            
+          gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
+          turns = 0;
+  
+          for (let e of selectedSquare){
+            e.innerHTML = " ";
+          }
+
+          selectedSquare.forEach(cell => {
+            cell.removeEventListener('click', placeSquare)
+          })
+
+          if (gameboard.game.players[0].score === 1) {
+            gameboard.game.players[0].score = 0;
+            gameboard.game.players[1].score = 0;        
+  
+            setTimeout(() => {
+              track++;
+              gameboard.gameOver();
+              return gameboard.winnerScreen(gameboard.game.players[0].name)
+            }, 20);
+          }
+        } else if (playTwoWins.test(gameString)) {
+          gameboard.game.players[1].score++;  
+          gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
+          turns = 0;
+  
+          for (let e of selectedSquare){
+            e.innerHTML = " ";
+          }
+
+          selectedSquare.forEach(cell => {
+            cell.removeEventListener('click', placeSquare)
+          })
+
+          if (gameboard.game.players[1].score === 1) {
+            gameboard.game.players[0].score = 0;
+            gameboard.game.players[1].score = 0;              
+  
+            setTimeout(() => {
+              track++;
+              gameboard.gameOver();    
+              return gameboard.winnerScreen(gameboard.game.players[1].name);
+            }, 20);
+          }
+        } else {
+          gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
+        turns = 0;
+        
+        for (let e of selectedSquare){
+          e.innerHTML = " ";
+        }
+
+        selectedSquare.forEach(cell => {
+          cell.removeEventListener('click', placeSquare)
+        })
+        
+        selectedSquare.forEach(cell => {
+          cell.addEventListener('click', placeSquare, once);
+        })
+
+        return popUps.turnWinner('It\'s a tie!');
+        }
+      }, 25);        
+      }
+
+      //Finds empty value in the gameboard to place a marker
+      while (track === 0 && turns != 9) {
+        let randNum = Math.floor(Math.random() * 9);
+
+        // Checks for a winner before max turns
+        setTimeout(() => {
+          const gameString = gameboard.game.gameBoard.join("");
+          const playOneWins = new RegExp(
+            "^(XXX)|^.{3}(XXX)|(X.{2})(X.{2})(X.{2})|(XXX)$|(.{2}X)(.{2}X)(.{2}X)|(.X.)(.X.)(.X.)|(X.{2})(.X.)(.{2}X)|(.{2}X)(.X.)(X.{2})"
+            );
+          const playTwoWins = new RegExp (
+            "^(OOO)|^.{3}(OOO)|(O.{2})(O.{2})(O.{2})|(OOO)$|(.{2}O)(.{2}O)(.{2}O)|(.O.)(.O.)(.O.)|(O.{2})(.O.)(.{2}O)|(.{2}O)(.O.)(O.{2})"
+          );
+          
+          if (playOneWins.test(gameString)) {
+            gameboard.game.players[0].score++;            
+            gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
+            turns = 0;
+    
+            for (let e of selectedSquare){
+              e.innerHTML = " ";
+            }
+
+            selectedSquare.forEach(cell => {
+              cell.removeEventListener('click', placeSquare)
+            })
+
+            if (gameboard.game.players[0].score === 1) {
+              gameboard.game.players[0].score = 0;
+              gameboard.game.players[1].score = 0;        
+    
+              setTimeout(() => {
+                track++;
+                gameboard.gameOver();
+                return gameboard.winnerScreen(gameboard.game.players[0].name)
+              }, 20);
+            }
+          } else if (playTwoWins.test(gameString)) {
+            gameboard.game.players[1].score++;  
+            gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
+            turns = 0;
+    
+            for (let e of selectedSquare){
+              e.innerHTML = " ";
+            }
+
+            selectedSquare.forEach(cell => {
+              cell.removeEventListener('click', placeSquare)
+            })
+
+            if (gameboard.game.players[1].score === 1) {
+              gameboard.game.players[0].score = 0;
+              gameboard.game.players[1].score = 0;              
+    
+              setTimeout(() => {
+                track++;
+                gameboard.gameOver();    
+                return gameboard.winnerScreen(gameboard.game.players[1].name);
+              }, 20);
+            }
+          }
+        }, 25);
+        
+        if (gameboard.game.gameBoard[randNum] != "X" && gameboard.game.gameBoard[randNum] != "O"){          
+            gameboard.game.gameBoard.splice(randNum, 1, gameboard.game.players[1].marker);
+            selectedSquare[randNum].innerHTML = gameboard.game.players[1].marker;
+            selectedSquare[randNum].removeEventListener('click', placeSquare)
+            gameboard.colorMarker();          
+            turns++;
+            track++;
+            gameboard.playerTurn(gameboard.game.players[0].name);
+        }         
+      }
+    }
+
+     if (round % 2 === 0) {
+      gameboard.playerTurn(gameboard.game.players[0].name);
+      if (gameboard.game.players[1].name === 'Computer') {
+        turns++;       
+        gameboard.playerTurn(gameboard.game.players[0].name);
+        gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[0].marker);
+        e.target.innerHTML = gameboard.game.players[0].marker;
+        e.target.removeEventListener('click', placeSquare);
+        gameboard.colorMarker();
+        gameboard.playerTurn(gameboard.game.players[1].name);
+        popUps.turnWinner(`${gameboard.game.players[1].name} is thinking...`)
+        setTimeout(() => {
+          cpuPlace();        
+        }, 2000)      
+      } else if (turns % 2 === 0) {
         turns++;
         gameboard.playerTurn(gameboard.game.players[1].name);
         gameboard.game.gameBoard.splice(arrIndex, 1, gameboard.game.players[0].marker);
@@ -167,7 +418,7 @@ function playGame() {
         gameboard.colorMarker();
       }
     } else if (round % 2 === 1) {
-      gameboard.playerTurn(gameboard.game.players[1].name);
+      gameboard.playerTurn(gameboard.game.players[1].name);      
       if (turns % 2 === 0) {
         turns++;
         gameboard.playerTurn(gameboard.game.players[0].name);
@@ -186,97 +437,107 @@ function playGame() {
     }
 
     // Checks who wins or if it's a tie
-    setTimeout(() => {
-      const gameString = gameboard.game.gameBoard.join("");
-      const playOneWins = new RegExp(
-        "^(XXX)|^.{3}(XXX)|(X.{2})(X.{2})(X.{2})|(XXX)$|(.{2}X)(.{2}X)(.{2}X)|(.X.)(.X.)(.X.)|(X.{2})(.X.)(.{2}X)|(.{2}X)(.X.)(X.{2})"
+    if (gameboard.game.players[1].name != 'Computer') {
+      setTimeout(() => {
+        const gameString = gameboard.game.gameBoard.join("");
+        const playOneWins = new RegExp(
+          "^(XXX)|^.{3}(XXX)|(X.{2})(X.{2})(X.{2})|(XXX)$|(.{2}X)(.{2}X)(.{2}X)|(.X.)(.X.)(.X.)|(X.{2})(.X.)(.{2}X)|(.{2}X)(.X.)(X.{2})"
+          );
+        const playTwoWins = new RegExp (
+          "^(OOO)|^.{3}(OOO)|(O.{2})(O.{2})(O.{2})|(OOO)$|(.{2}O)(.{2}O)(.{2}O)|(.O.)(.O.)(.O.)|(O.{2})(.O.)(.{2}O)|(.{2}O)(.O.)(O.{2})"
         );
-      const playTwoWins = new RegExp (
-        "^(OOO)|^.{3}(OOO)|(O.{2})(O.{2})(O.{2})|(OOO)$|(.{2}O)(.{2}O)(.{2}O)|(.O.)(.O.)(.O.)|(O.{2})(.O.)(.{2}O)|(.{2}O)(.O.)(O.{2})"
-      );
-      
-      if (playOneWins.test(gameString)) {
-        gameboard.game.players[0].score++;
-        gameboard.drawScore();
         
-        gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
-        turns = 0;
-
-        for (let e of selectedSquare){
-          e.innerHTML = " ";
-        }
-
-        selectedSquare.forEach(cell => {
-          cell.addEventListener('click', placeSquare);
-        })
-
-        if (gameboard.game.players[0].score === 3) {
-          gameboard.game.players[0].score = 0;
-          gameboard.game.players[1].score = 0;
+        if (playOneWins.test(gameString)) {
+          gameboard.game.players[0].score++;
           gameboard.drawScore();
-
-          setTimeout(() => {
-            gameboard.gameOver();
-            return gameboard.winnerScreen(gameboard.game.players[0].name)
-          }, 20);
-        } else {
-          setTimeout(() => {
-            round++;
-            return alert(`${gameboard.game.players[0].name} has won the round!`);
-          }, 25);
-        }                
-      
-      } else if (playTwoWins.test(gameString)) {
-        gameboard.game.players[1].score++;
-        gameboard.drawScore();
-
-        gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
-        turns = 0;
-
-        for (let e of selectedSquare){
-          e.innerHTML = " ";
-        }
-
-        selectedSquare.forEach(cell => {
-          cell.addEventListener('click', placeSquare);
-        })     
-
-        if (gameboard.game.players[1].score === 3) {
-          gameboard.game.players[0].score = 0;
-          gameboard.game.players[1].score = 0;
-          gameboard.drawScore();
-
-          setTimeout(() => {
-            gameboard.gameOver();
-            return gameboard.winnerScreen(gameboard.game.players[1].name);
-          }, 20);
-        } else {
-          setTimeout(() => {
-            round++;
-            return alert(`${gameboard.game.players[1].name} has won the round!`);
-          }, 25);  
-        }
+          
+          gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
+          turns = 0;
+  
+          for (let e of selectedSquare){
+            e.innerHTML = " ";
+          }
+  
+          selectedSquare.forEach(cell => {
+            cell.removeEventListener('click', placeSquare)
+          })
+          
+          selectedSquare.forEach(cell => {
+            cell.addEventListener('click', placeSquare);
+          })
+  
+          if (gameboard.game.players[0].score === 3) {
+            gameboard.game.players[0].score = 0;
+            gameboard.game.players[1].score = 0;
+            gameboard.drawScore();
+  
+            setTimeout(() => {
+              gameboard.gameOver();
+              selectedSquare.forEach(cell => {
+                cell.removeEventListener('click', placeSquare)
+              })
+              return gameboard.winnerScreen(gameboard.game.players[0].name)
+            }, 20);
+          } else {
+            setTimeout(() => {
+              round++;
+              return popUps.turnWinner(`${gameboard.game.players[0].name} has won the round!`)
+            }, 25);
+          }                
         
-      } else if (turns === 9) {
-        gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
-        gameboard.drawScore();
-        turns = 0;
-        round++;
-
-        for (let e of selectedSquare){
-          e.innerHTML = " ";
+        } else if (playTwoWins.test(gameString)) {
+          gameboard.game.players[1].score++;
+          gameboard.drawScore();
+  
+          gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
+          turns = 0;
+  
+          for (let e of selectedSquare){
+            e.innerHTML = " ";
+          }
+  
+          selectedSquare.forEach(cell => {
+            cell.removeEventListener('click', placeSquare)
+          })
+  
+          selectedSquare.forEach(cell => {
+            cell.addEventListener('click', placeSquare);
+          })
+  
+          if (gameboard.game.players[1].score === 3) {
+            gameboard.game.players[0].score = 0;
+            gameboard.game.players[1].score = 0;
+            gameboard.drawScore();
+  
+            setTimeout(() => {
+              gameboard.gameOver();
+              selectedSquare.forEach(cell => {
+                cell.removeEventListener('click', placeSquare)
+              })  
+              return gameboard.winnerScreen(gameboard.game.players[1].name);
+            }, 20);
+          } else {
+            setTimeout(() => {
+              round++;            
+              return popUps.turnWinner(`${gameboard.game.players[1].name} has won the round!`);
+            }, 25);  
+          }        
+        } else if (turns === 9) {
+          gameboard.game.gameBoard = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
+          gameboard.drawScore();
+          turns = 0;
+  
+          for (let e of selectedSquare){
+            e.innerHTML = " ";
+          }
+  
+          selectedSquare.forEach(cell => {
+            cell.addEventListener('click', placeSquare, once);
+          })
+  
+          return popUps.turnWinner('It\'s a tie!');
         }
-
-        selectedSquare.forEach(cell => {
-          cell.addEventListener('click', placeSquare);
-        })
-
-        return alert('It\'s a tie!');
-      }
-    }, 25)
+      }, 25);
+    }
   }  
-
-  selectedSquare.forEach(cell => {
-    cell.addEventListener('click', placeSquare);
-  })
 }
