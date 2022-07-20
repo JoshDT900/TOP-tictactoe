@@ -398,7 +398,7 @@ function playGame() {
         e.target.removeEventListener('click', placeSquare);
         gameboard.colorMarker();
         gameboard.playerTurn(gameboard.game.players[1].name);
-        popUps.turnWinner(`${gameboard.game.players[1].name} is thinking...`)
+        popUps.turnWinner(`The Computer is thinking...`)
         setTimeout(() => {
           cpuPlace();        
         }, 2000)      
